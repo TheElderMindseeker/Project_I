@@ -15,16 +15,21 @@ struct Student {
      *
      * @param birth_date Birth date
      */
-    Student (Date birth_date) : birth_date (birth_date) {}
+    Student (std::string name, Date birth_date) : name (name), birth_date (birth_date) {}
 
     /**
      * @brief Tells the age of current Student
      *
-     * @param today The day to answer a question 'what is your age?'
+     * @param today The day to answer a question "what is your age?"
      *
      * @return Age of the Student in years
      */
     unsigned age (Date today) const;
+
+    /**
+     * @brief Student name
+     */
+    std::string name;
 
     /**
      * @brief Birth date of Student

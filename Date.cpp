@@ -6,6 +6,9 @@
 #include "Date.hpp"
 
 
+Date::Date () : Date (1, 1, 1) {}
+
+
 Date::Date (std::string date) throw (std::invalid_argument) {
     int day, month, year;
     parse (date, day, month, year);
@@ -37,6 +40,27 @@ int Date::get_month () const {
 
 int Date::get_year () const {
     return year;
+}
+
+
+void Date::set_day (int day) throw (std::invalid_argument) {
+    Date::day = day;
+
+    check_date (Date::day, Date::month, Date::year);
+}
+
+
+void Date::set_month (int month) throw (std::invalid_argument) {
+    Date::month = month;
+
+    check_date (Date::day, Date::month, Date::year);
+}
+
+
+void Date::set_year (int year) throw (std::invalid_argument) {
+    Date::year = year;
+
+    check_date (Date::day, Date::month, Date::year);
 }
 
 
