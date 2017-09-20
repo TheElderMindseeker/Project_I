@@ -12,6 +12,9 @@ const int TEAM_MEMBERS = 3;
 const int CURRENT_YEAR = 2017;
 
 
+void sentence_information_amount (std::vector<Student> &team);
+size_t calculate_text_entropy (std::vector<Student> &team);
+
 float question_information (const std::vector<Student> &team, const Date question_date);
 float phrase_entropy (const std::string phrase);
 
@@ -23,26 +26,43 @@ int main (int argc, char **argv) {
     team.push_back (Student (std::string ("Andrey"), Date ("31.05.1998")));
     team.push_back (Student (std::string ("Niyaz"), Date ("14.11.1998")));
 
+    sentence_information_amount (team);
+    size_t M = calculate_text_entropy (team);
+
+    return 0;
+}
+
+
+void sentence_information_amount (std::vector<Student> &team) {
     std::string today_s;
     std::cout << "Input current date (in a format dd.mm.yyyy): ";
     std::cin >> today_s;
-    
+
     Date today;
 
-    try {
-        today = Date (today_s);
+    bool valid_input;
+    do {
+        valid_input = true;
+        try {
+            today = Date (today_s);
+        }
+        catch (std::invalid_argument e) {
+            std::cout << e.what () << '\n';
+            std::cout << "Input current date (in a format dd.mm.yyyy): ";
+            valid_input = false;
+        }
     }
-    catch (std::invalid_argument e) {
-        std::cout << e.what ();
-        return -1;
-    }
+    while (! valid_input);
 
     float information_amount = question_information (team, today);
 
     std::cout << "The amount of information in sentence 'Random student age is " << team.back ().age (today) << "' is equal to ";
     std::cout << std::setprecision (3) << std::setiosflags (std::ios_base::fixed | std::ios_base::showpoint);
     std::cout << information_amount << std::endl;
+}
 
+
+size_t calculate_text_entropy (std::vector<Student> &team) {
     std::vector<Date> dates;
     dates.reserve (4);
     dates.push_back (Date ("01.01.2017"));
@@ -81,7 +101,7 @@ int main (int argc, char **argv) {
     std::cout << "\nThe entropy of the following phrase:\n" << text_generator.str () << "\n\tis "
               << phrase_entropy (text_generator.str ()) << std::endl;
 
-    return 0;
+    return text_generator.str ().length ();
 }
 
 
