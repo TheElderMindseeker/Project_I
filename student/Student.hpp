@@ -6,7 +6,7 @@
 #define PROJECT_I_STUDENT_HPP
 
 
-#include "Date.hpp"
+#include "../date/Date.hpp"
 
 
 struct Student {
@@ -15,7 +15,7 @@ struct Student {
      *
      * @param birth_date Birth date
      */
-    Student (std::string name, Date birth_date) : name (name), birth_date (birth_date) {}
+    Student (std::string name, Date birth_date, unsigned height) : name (name), birth_date (birth_date), height (height) {}
 
     /**
      * @brief Tells the age of current Student
@@ -35,6 +35,11 @@ struct Student {
      * @brief Birth date of Student
      */
     Date birth_date;
+
+    /**
+     * @brief Student height in centimeters (rounded to integral type)
+     */
+    unsigned height;
 };
 
 

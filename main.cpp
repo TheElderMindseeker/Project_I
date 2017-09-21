@@ -4,8 +4,9 @@
 #include <cmath>
 #include <vector>
 #include <iomanip>
-#include "Date.hpp"
-#include "Student.hpp"
+#include "date/Date.hpp"
+#include "student/Student.hpp"
+#include "pill/Pill.hpp"
 
 
 const int TEAM_MEMBERS = 3;
@@ -15,6 +16,7 @@ const int CURRENT_YEAR = 2017;
 void sentence_information_amount (std::vector<Student> &team);
 size_t calculate_text_entropy (std::vector<Student> &team);
 void calculate_watch_choice_probability (size_t M);
+void pill_probabilities (std::vector<Student> &team);
 
 float question_information (const std::vector<Student> &team, const Date question_date);
 float phrase_entropy (const std::string phrase);
@@ -23,13 +25,14 @@ float phrase_entropy (const std::string phrase);
 int main (int argc, char **argv) {
     std::vector<Student> team;
     team.reserve (TEAM_MEMBERS);
-    team.push_back (Student (std::string ("Daniil"), Date ("01.03.1999")));
-    team.push_back (Student (std::string ("Andrey"), Date ("31.05.1998")));
-    team.push_back (Student (std::string ("Niyaz"), Date ("14.11.1998")));
+    team.push_back (Student (std::string ("Daniil"), Date ("01.03.1999"), 174));
+    team.push_back (Student (std::string ("Andrey"), Date ("31.05.1998"), 175));
+    team.push_back (Student (std::string ("Niyaz"), Date ("14.11.1998"), 173));
 
     sentence_information_amount (team);
     size_t M = calculate_text_entropy (team);
     calculate_watch_choice_probability (M);
+    pill_probabilities (team);
 
     return 0;
 }
@@ -172,4 +175,35 @@ float phrase_entropy (const std::string phrase) {
     }
 
     return entropy;
+}
+
+
+void pill_probabilities (std::vector<Student> &team) {
+    unsigned total_height = 0;
+    for (auto iter = team.begin (); iter != team.end (); iter++)
+        total_height += iter->height;
+
+    auto iter = team.begin ();
+
+    Pill killing_pill ((float) iter->height / total_height, 0.90f, 0.07f, 0.03f);
+    ++iter;
+    Pill normal_pill ((float) iter->height / total_height, 0.05f, 0.02f, 0.93f);
+    ++iter;
+    Pill placebo ((float) iter->height / total_height, 0.007f, 0.003f, 0.99f);
+
+    float killing_pill_given_death = killing_pill.get_joint_rate (killing_pill.get_death_rate ())
+                                     / (killing_pill.get_joint_rate (killing_pill.get_death_rate ())
+                                        + normal_pill.get_joint_rate (normal_pill.get_death_rate ())
+                                        + placebo.get_joint_rate (placebo.get_death_rate ()));
+
+    float survival_probability = (1 - killing_pill.get_death_rate ())
+                                 * (1 - normal_pill.get_death_rate ())
+                                 * (1 - placebo.get_death_rate ());
+
+    std::cout << "\nThe probability the person took killing pill given that he died is "
+              << std::setiosflags (std::ios_base::showpoint | std::ios_base::fixed) << std::setprecision (4)
+              << killing_pill_given_death << ".\n";
+    std::cout << "The probability of person surviving taking all the three types of pills is "
+              << std::setiosflags (std::ios_base::showpoint | std::ios_base::fixed) << std::setprecision (4)
+              << survival_probability << ".\n";
 }
