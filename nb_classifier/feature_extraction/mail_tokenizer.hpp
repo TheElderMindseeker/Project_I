@@ -10,7 +10,7 @@
 #include <memory>
 #include <list>
 #include <map>
-#include "classifier_state.hpp"
+#include "../classifier_state.hpp"
 
 
 /**
@@ -24,25 +24,12 @@ void update_word_frequencies (std::map<std::string, long long unsigned> &words, 
                               std::locale locale = std::locale ("C"));
 
 
-/**
- * @brief Fits the classifier to the training data provided in files specified by filenames.
- *
- * @param filenames List of pairs of filenames together with flag if the file is spam.
- *
- * @return Classifier state.
- */
-std::unique_ptr<classifier_state> fit (const std::list<std::pair<std::string, bool>> &filenames);
+template <typename t_char>
+struct locale_tolower {
+    t_char operator () (t_char c) const;
 
-
-/**
- * @brief Predicts if the given mail is spam.
- *
- * @param clf Classifier trained to distinguish spam and ham.
- * @param mail Mail to be classifier.
- *
- * @return True if the mail is spam, false otherwise.
- */
-bool predict (const std::unique_ptr<classifier_state> &clf, const std::string &mail, float threshold = 0.8);
+    std::locale loc;
+};
 
 
 #endif //PROJECT_I_MAIL_TOKENIZER_HPP
